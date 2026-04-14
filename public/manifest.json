@@ -1,7 +1,7 @@
 {
   "name": "Momentum Dashboard",
   "short_name": "Momentum",
-  "description": "ADHD HUD — Flat-capture, focus, and dopamine-driven task completion",
+  "description": "ADHD HUD — Flat capture, focus, dopamine.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#020617",

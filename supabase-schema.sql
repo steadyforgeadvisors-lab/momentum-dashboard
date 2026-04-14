@@ -1,24 +1,19 @@
--- Run this in your Supabase SQL Editor to set up the database
-
-create extension if not exists "uuid-ossp";
+-- Momentum Dashboard — Optional Supabase Schema
+-- Only needed if you want cloud sync across devices
+-- By default, the app uses localStorage (no setup needed)
 
 create table if not exists tasks (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users(id) on delete cascade,
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
   title text not null,
   status text not null default 'captured' check (status in ('captured', 'doing', 'done')),
-  xp integer default 100,
-  created_at timestamptz default now(),
+  xp int not null default 100,
+  created_at timestamptz not null default now(),
   started_at timestamptz,
   completed_at timestamptz
 );
 
 alter table tasks enable row level security;
 
-create policy "Users can manage their own tasks"
-  on tasks for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
-create index tasks_user_id_idx on tasks(user_id);
-create index tasks_status_idx on tasks(status);
+create policy "Users see own tasks" on tasks
+  for all using (auth.uid() = user_id);

@@ -1,72 +1,46 @@
 "use client";
-export const dynamic = "force-dynamic";
-
 import { useEffect, useState, useCallback } from "react";
-import { getSupabase, Task } from "@/lib/supabase";
+import { Task, loadTasks, saveTasks, makeTask } from "@/lib/tasks";
 import Chute from "./components/Chute";
 import Lane from "./components/Lane";
 import DopamineNudge from "./components/DopamineNudge";
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
   const [showNudge, setShowNudge] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [ready, setReady] = useState(false);
 
-  useEffect(() => { setReady(true); }, []);
-
+  // Load from localStorage after hydration
   useEffect(() => {
-    if (!ready) return;
-    const sb = getSupabase();
-    sb.auth.getSession().then(({ data }) => {
-      if (data.session?.user) {
-        setUserId(data.session.user.id);
-      } else {
-        sb.auth.signInAnonymously().then(({ data }) => {
-          setUserId(data.user?.id ?? null);
-        });
-      }
-    });
-  }, [ready]);
-
-  useEffect(() => {
-    if (!userId) return;
-    const sb = getSupabase();
-    sb.from("tasks")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        setTasks((data as Task[]) ?? []);
-        setLoading(false);
-      });
-  }, [userId]);
-
-  const capture = useCallback(async (title: string) => {
-    if (!userId) return;
-    const sb = getSupabase();
-    const { data } = await sb.from("tasks").insert({
-      title, status: "captured", xp: 100, user_id: userId,
-    }).select().single();
-    if (data) setTasks(prev => [data as Task, ...prev]);
-  }, [userId]);
-
-  const startTask = useCallback(async (id: string) => {
-    const now = new Date().toISOString();
-    await getSupabase().from("tasks").update({ status: "doing", started_at: now }).eq("id", id);
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, status: "doing", started_at: now } : t));
+    setTasks(loadTasks());
+    setReady(true);
   }, []);
 
-  const completeTask = useCallback(async (id: string) => {
+  // Persist whenever tasks change
+  useEffect(() => {
+    if (ready) saveTasks(tasks);
+  }, [tasks, ready]);
+
+  const capture = useCallback((title: string) => {
+    setTasks(prev => [makeTask(title), ...prev]);
+  }, []);
+
+  const startTask = useCallback((id: string) => {
     const now = new Date().toISOString();
-    await getSupabase().from("tasks").update({ status: "done", completed_at: now }).eq("id", id);
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, status: "done", completed_at: now } : t));
+    setTasks(prev => prev.map(t =>
+      t.id === id ? { ...t, status: "doing" as const, started_at: now } : t
+    ));
+  }, []);
+
+  const completeTask = useCallback((id: string) => {
+    const now = new Date().toISOString();
+    setTasks(prev => prev.map(t =>
+      t.id === id ? { ...t, status: "done" as const, completed_at: now } : t
+    ));
     setShowNudge(true);
   }, []);
 
-  const deleteTask = useCallback(async (id: string) => {
-    await getSupabase().from("tasks").delete().eq("id", id);
+  const deleteTask = useCallback((id: string) => {
     setTasks(prev => prev.filter(t => t.id !== id));
   }, []);
 
@@ -84,19 +58,17 @@ export default function Dashboard() {
         <div className="flex items-center gap-4 text-xs font-mono">
           <span className="text-slate-500">{tasks.filter(t => t.status !== "done").length} active</span>
           {totalXP > 0 && <span className="text-cyan-400 font-bold">+{totalXP} XP</span>}
-          <span className="text-green-500 text-xs">● LIVE</span>
         </div>
       </header>
 
       <Chute onCapture={capture} />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-700 font-mono text-sm">
-          Syncing with your brain...
-        </div>
-      ) : (
-        <Lane tasks={tasks} onStart={startTask} onComplete={completeTask} onDelete={deleteTask} />
-      )}
+      <Lane
+        tasks={tasks}
+        onStart={startTask}
+        onComplete={completeTask}
+        onDelete={deleteTask}
+      />
 
       <DopamineNudge show={showNudge} onDone={() => setShowNudge(false)} />
     </div>

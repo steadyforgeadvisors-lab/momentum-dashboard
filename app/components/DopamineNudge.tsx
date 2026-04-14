@@ -1,29 +1,26 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-const messages = [
-  "✅ NICE! +100 XP",
-  "🔥 ON FIRE! +100 XP",
-  "⚡ LOCKED IN! +100 XP",
-  "💪 CRUSHED IT! +100 XP",
-  "🎯 BULLS-EYE! +100 XP",
-];
+interface DopamineNudgeProps {
+  show: boolean;
+  onDone: () => void;
+}
 
-export default function DopamineNudge({ show, onDone }: { show: boolean; onDone: () => void }) {
-  const [msg] = useState(() => messages[Math.floor(Math.random() * messages.length)]);
-
+export default function DopamineNudge({ show, onDone }: DopamineNudgeProps) {
   useEffect(() => {
-    if (!show) return;
-    const t = setTimeout(onDone, 2200);
-    return () => clearTimeout(t);
+    if (show) {
+      const id = setTimeout(onDone, 2000);
+      return () => clearTimeout(id);
+    }
   }, [show, onDone]);
 
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-      <div className="animate-bounce text-4xl font-black text-cyan-400 bg-slate-900 border-2 border-cyan-400 rounded-2xl px-10 py-6 shadow-2xl shadow-cyan-400/30">
-        {msg}
+    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+      <div className="animate-bounce text-center">
+        <div className="text-5xl mb-2">✅</div>
+        <div className="text-cyan-400 font-black text-2xl font-mono tracking-tight">NICE! +100 XP</div>
       </div>
     </div>
   );

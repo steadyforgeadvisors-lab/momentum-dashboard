@@ -2,59 +2,52 @@
 
 > Flat-capture. Focus. Dopamine. Your ADHD brain's command center.
 
-A self-hosted, offline-first task dashboard built for how ADHD brains actually work.
-Deploy your own instance in under 5 minutes. Your data, your Supabase, your rules.
+A **zero-config** task dashboard built for how ADHD brains actually work.
+Deploy to Vercel in 60 seconds. No database setup. No accounts. Just works.
 
 ---
 
 ## ✨ Features
 
-- **The Chute** — Full-width capture input. Type anything. Hit `Enter`. It's captured.
-- **The Lane** — 2-column HUD: Captured left, Doing/Done right.
-- **Time Visualizer** — `$[▓▓▓▓▓░░░░░]$` — Visual time bar.
-- **Dopamine Nudge** — `✅ NICE! +100 XP` — Animated celebration on every completion.
-- **XP System** — Daily XP tracker so momentum feels real.
-- **Offline-First PWA** — Works without internet. Install on phone like a native app.
-- **Privacy-First** — All data stays in YOUR Supabase. Nothing shared.
+- **The Chute** — Full-width capture input. Type anything. Hit `Enter`. Done.
+- **The Lane** — 2-column HUD: Captured → Doing → Done
+- **Time Visualizer** — `$[▓▓▓▓▓░░░░░]$` Live timer bar for active tasks
+- **Dopamine Nudge** — `✅ NICE! +100 XP` Animated celebration on every completion
+- **XP Tracker** — Daily XP accumulates as you crush tasks
+- **Offline-First PWA** — Works without internet. Installable on phone
+- **Privacy-First** — All data stays in YOUR browser. Nothing sent anywhere
 
 ---
 
-## 🚀 Deploy in 5 Minutes
+## 🚀 Deploy in 60 Seconds
 
-### Step 1 — Set up Supabase
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/steadyforgeadvisors-lab/momentum-dashboard)
 
-1. Go to [supabase.com](https://supabase.com) → Create a new project
-2. Open **SQL Editor** → paste `supabase-schema.sql` → Run
-3. Go to **Project Settings → API** → Copy `Project URL` and `anon public` key
+1. Click the button above
+2. Connect your GitHub
+3. Click **Deploy** — no env vars needed
+4. Done ✅
 
-### Step 2 — Deploy to Vercel
+---
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/steadyforgeadvisors-lab/momentum-dashboard&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY&envDescription=Your+Supabase+project+URL+and+anon+key)
-
-Or manually:
-1. Fork/clone this repo
-2. Import to [vercel.com](https://vercel.com)
-3. Add env vars: `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Deploy ✅
-
-### Step 3 — Install as PWA (Optional)
+## 📱 Install as App (PWA)
 
 - **iPhone:** Safari → Share → Add to Home Screen
-- **Android:** Chrome → Menu → Add to Home Screen
+- **Android:** Chrome → Menu → Add to Home Screen  
 - **Desktop:** Click install icon in browser address bar
 
 ---
 
-## 🏗 Local Dev
+## 🏗 Local Development
 
 ```bash
 git clone https://github.com/steadyforgeadvisors-lab/momentum-dashboard
 cd momentum-dashboard
 npm install
-cp .env.example .env.local
-# fill in .env.local
 npm run dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -63,14 +56,22 @@ npm run dev
 | Layer | Tech |
 |-------|------|
 | Framework | Next.js 15 (App Router) |
-| Database | Supabase (Postgres + Auth) |
 | Styling | Tailwind CSS v4 |
+| Storage | localStorage (browser-native) |
 | PWA | Service Worker (offline-first) |
-| Deployment | Vercel (one-click) |
+| Deploy | Vercel (one-click) |
 
 ---
 
-## 💰 License
+## 💾 Data Storage
+
+By default, all tasks are saved in your browser's `localStorage`. Your data never leaves your device.
+
+**Want cloud sync across devices?** The optional `supabase-schema.sql` is included if you want to extend the app with Supabase.
+
+---
+
+## 📄 License
 
 MIT — Use it, sell it, fork it.
 

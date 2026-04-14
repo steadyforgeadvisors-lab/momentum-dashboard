@@ -3,33 +3,35 @@ import { useEffect, useState } from "react";
 
 interface TimeVisualizerProps {
   startedAt: string | null;
-  estimatedMinutes?: number;
 }
 
-export default function TimeVisualizer({ startedAt, estimatedMinutes = 25 }: TimeVisualizerProps) {
+export default function TimeVisualizer({ startedAt }: TimeVisualizerProps) {
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
     if (!startedAt) return;
-    const interval = setInterval(() => {
+    const tick = () => {
       const ms = Date.now() - new Date(startedAt).getTime();
-      setElapsed(Math.floor(ms / 60000));
-    }, 10000);
-    setElapsed(Math.floor((Date.now() - new Date(startedAt).getTime()) / 60000));
-    return () => clearInterval(interval);
+      setElapsed(Math.min(ms / 1000, 3600)); // cap at 1 hour
+    };
+    tick();
+    const id = setInterval(tick, 10000);
+    return () => clearInterval(id);
   }, [startedAt]);
 
   if (!startedAt) return null;
 
-  const pct = Math.min(elapsed / estimatedMinutes, 1);
-  const bars = 10;
-  const filled = Math.round(pct * bars);
-  const bar = "▓".repeat(filled) + "░".repeat(bars - filled);
-  const color = pct < 0.6 ? "text-cyan-400" : pct < 0.9 ? "text-yellow-400" : "text-red-400";
+  const pct = Math.min(elapsed / 3600, 1);
+  const filled = Math.round(pct * 10);
+  const bar = "▓".repeat(filled) + "░".repeat(10 - filled);
+  const mins = Math.floor(elapsed / 60);
 
   return (
-    <div className={`text-xs font-mono mt-1 ${color}`}>
-      $[{bar}]$ {elapsed}m / {estimatedMinutes}m
+    <div className="mt-2 font-mono text-xs text-slate-500">
+      <span className="text-cyan-600">$[</span>
+      <span className="text-cyan-400">{bar}</span>
+      <span className="text-cyan-600">]$</span>
+      <span className="ml-2 text-slate-600">{mins}m</span>
     </div>
   );
 }
