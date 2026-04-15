@@ -9,18 +9,19 @@ interface DopamineNudgeProps {
 export default function DopamineNudge({ show, onDone }: DopamineNudgeProps) {
   useEffect(() => {
     if (show) {
-      const id = setTimeout(onDone, 2000);
-      return () => clearTimeout(id);
+      const timer = setTimeout(onDone, 2000);
+      return () => clearTimeout(timer);
     }
   }, [show, onDone]);
 
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+    <div className="fixed inset-0 pointer-events-none flex items-center justify-center">
       <div className="animate-bounce text-center">
-        <div className="text-5xl mb-2">✅</div>
-        <div className="text-cyan-400 font-black text-2xl font-mono tracking-tight">NICE! +100 XP</div>
+        <div className="text-6xl mb-3">✅</div>
+        <div className="text-2xl font-bold text-emerald-400 font-mono">+100 XP</div>
+        <div className="text-sm text-slate-400 mt-2">Momentum building...</div>
       </div>
     </div>
   );

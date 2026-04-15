@@ -49,20 +49,31 @@ export default function Dashboard() {
   if (!ready) return null;
 
   return (
-    <div className="flex flex-col h-screen bg-slate-950 text-slate-100">
-      <header className="flex items-center justify-between px-4 py-2 border-b border-slate-800 shrink-0">
-        <div className="flex items-center gap-3">
-          <span className="text-cyan-400 font-black text-lg tracking-tight">⚡ MOMENTUM</span>
-          <span className="text-slate-600 text-xs font-mono">ADHD HUD v1.0</span>
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+      {/* Header */}
+      <header className="px-6 py-4 border-b border-slate-800/50 flex items-center justify-between shrink-0 bg-slate-900/40 backdrop-blur-sm">
+        <div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">⚡ MOMENTUM</h1>
+          <p className="text-xs text-slate-500 font-mono mt-0.5">ADHD HUD • Real-time focus tracker</p>
         </div>
-        <div className="flex items-center gap-4 text-xs font-mono">
-          <span className="text-slate-500">{tasks.filter(t => t.status !== "done").length} active</span>
-          {totalXP > 0 && <span className="text-cyan-400 font-bold">+{totalXP} XP</span>}
+        <div className="flex items-center gap-6 text-sm">
+          <div className="text-right">
+            <div className="text-slate-400 text-xs">Tasks</div>
+            <div className="text-lg font-bold text-cyan-400">{tasks.filter(t => t.status !== "done").length}</div>
+          </div>
+          {totalXP > 0 && (
+            <div className="text-right">
+              <div className="text-slate-400 text-xs">XP</div>
+              <div className="text-lg font-bold text-emerald-400">+{totalXP}</div>
+            </div>
+          )}
         </div>
       </header>
 
+      {/* Input Zone */}
       <Chute onCapture={capture} />
 
+      {/* Main Lane */}
       <Lane
         tasks={tasks}
         onStart={startTask}
